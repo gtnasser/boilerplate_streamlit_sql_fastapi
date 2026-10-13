@@ -3,7 +3,7 @@
 Base para o desenvolvimento de sistemas modulares com autenticação, controle de sessão via **JWT** e acesso a bancos de dados relacionais. 
 O projeto foi desenhado para servir como ponto de partida (*boilerplate*) para novos softwares, permitindo flexibilidade total na arquitetura de implantação.
 
-## 🏛️ Arquitetura e Padrões de Projeto
+## 🎯 Arquitetura e Padrões de Projeto
 
 O projeto adota uma abordagem baseada em **Ports & Adapters (Arquitetura Hexagonal / Clean Architecture)**. 
 O grande diferencial dessa estrutura é que a interface e as regras de negócio são completamente desacopladas da camada de persistência e comunicação. 
@@ -16,9 +16,7 @@ O sistema pode rodar em dois cenários distintos, controlados de forma simples p
 Essa separação rígida de responsabilidades promove alta **manutenibilidade** e **testabilidade**. 
 É possível, por exemplo, criar cenários adicionais totalmente isolados (como um `mock_repository.py` para testes automatizados) ajustando apenas o mapeamento no `data_service.py`.
 
----
-
-## 📂 Estrutura de Diretórios
+### 📂 Estrutura de Diretórios
 
 ```text
 myproject/
@@ -30,14 +28,16 @@ myproject/
 ├── adapters/
 │   ├── db_local.py           # Acesso direto ao banco local (Usado no Cenário 1)
 │   └── api_client.py         # Acesso via HTTP/FastAPI (Usado no Cenário 2)
-└── frontend/
-    └── views/                # Telas do Streamlit que consomem exclusivamente o data_service
+├── frontend/
+│   └── views/                # Telas do Streamlit que consomem exclusivamente o data_service
+├── mydatabase.db
+└── .env                      # Variáveis de ambiente (ex: APP_MODE=local)
 ```
 
 
-⚙️ Configuração e Módulos Principais
+### ️📄 Funções e Responsabilidade dos Módulos Principais
 
-1. Configuração do Ambiente (core/config.py)
+1. Configuração do Ambiente (`core/config.py`)
 
 Responsável por carregar as variáveis de configuração que determinam o comportamento do sistema.
 
@@ -53,7 +53,7 @@ APP_MODE = os.getenv("APP_MODE", "local")  # Opções: "local" ou "api"
 API_BASE_URL = os.getenv("API_BASE_URL", "http://localhost:8000")
 ```
 
-2. Configuração do Banco de Dados (core/database.py)
+2. Configuração do Banco de Dados (`core/database.py`)
 
 Gerencia unicamente a conexão com o banco de dados (exemplo utilizando **SQLite**) e provê as sessões ativas.
 
@@ -82,7 +82,7 @@ def get_database_session() -> Generator[Session, None, None]:
         db.close()
 ```
 
-3. Interface Central de Dados (services/data_service.py)
+3. Interface Central de Dados (`services/data_service.py`)
 
 Atua como o ponto de chaveamento do sistema. O frontend interage exclusivamente com este serviço, que injeta o adaptador correspondente com base na variável `APP_MODE`.
 
@@ -158,3 +158,40 @@ def criar_ocorrencia_sistema(dados: Dict[str, Any], token: str = "") -> Dict[str
     response = httpx.post(f"{API_BASE_URL}/ocorrencias", json=dados, headers=headers, timeout=10.0)
     return response.json() if response.status_code == 201 else {}
 ```
+
+-----
+
+## 🎯 Navegação básica
+
+Fluxo básico do Frontend: Menu de navegação, controle de sessão e login.
+
+### 📂 Estrutura de Diretórios
+
+```text
+└── frontend/
+    ├── app.py                # Aplicação principal, menu lateral, roteamento e login
+    ├── utils/
+    |   └── auth_utils.py     # Módulo encapsulado de estado e permissões
+    └── views/                # Telas do Streamlit que consomem exclusivamente o data_service
+        ├── home.py           # Tela de entrada do sistema
+        └── about.py          # Tela com informações, para compor o menu
+```
+
+### ️📄 Funções e Responsabilidade dos Módulos Principais
+
+1. Aplicação Principal (`app.py`)
+
+É a aplicação principal do sistema, atua como o roteador central, verifica o estado de autenticação do usuário (`st.session_state`), decide se exibe a tela de login ou o painel protegido com o menu lateral de navegação.
+
+2. Rotinas de Autenticação (`auth_utils.py`)
+
+Conjunto de rotinas para manipulação dos dados de autenticação da sessão e das variáveis de memória da sessão.
+
+2. Tela de Autenticação (`login.py`)
+
+Tela de autenticação do usuário, chamada sempre que a sessão não estiver devidamente autenticada.
+
+-----
+
+pendencias:
+login.py -> rotina de autenticação do usuário
