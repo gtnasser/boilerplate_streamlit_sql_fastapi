@@ -57,7 +57,7 @@ def _seed_initial_admin() -> None:
             )
 
 
-# --- Autenticaçãqo ---
+# --- Autenticação ---
 
 def _hash_password(password: str, salt: bytes | None = None) -> Tuple[str, str]:
     """Gera o salt e o hash de uma senha utilizando PBKDF2 com SHA-256."""

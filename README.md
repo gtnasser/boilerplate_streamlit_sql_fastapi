@@ -174,7 +174,7 @@ Fluxo básico do Frontend: Menu de navegação, controle de sessão e login.
     |   └── auth_utils.py     # Módulo encapsulado de estado e permissões
     └── views/                # Telas do Streamlit que consomem exclusivamente o data_service
         ├── home.py           # Tela de entrada do sistema
-        └── about.py          # Tela com informações, para compor o menu
+        └── lista_usuario.py  # Tela com listagem de usuários, como exemplo para menu, dados, etc.
 ```
 
 ### ️📄 Funções e Responsabilidade dos Módulos Principais
@@ -192,6 +192,3 @@ Conjunto de rotinas para manipulação dos dados de autenticação da sessão e 
 Tela de autenticação do usuário, chamada sempre que a sessão não estiver devidamente autenticada.
 
 -----
-
-pendencias:
-login.py -> rotina de autenticação do usuário

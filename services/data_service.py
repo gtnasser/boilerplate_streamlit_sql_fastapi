@@ -19,6 +19,10 @@ else:
 
 # --- Usuários ---
 
+def autenticar_usuario_sistema(username: str, password: str) -> Dict[str, Any]:
+    """Interface unificada para autenticação de usuários."""
+    return data_provider.autenticar_usuario_sistema(username, password)
+
 def listar_usuarios_sistema(token: str = "") -> List[Dict[str, Any]]:
     """Retorna todos os usuários cadastrados."""
     return data_provider.listar_usuarios_sistema(token)

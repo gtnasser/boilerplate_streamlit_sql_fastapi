@@ -3,7 +3,7 @@
 import sys
 from pathlib import Path
 
-# Adiciona a raiz do projeto (myproject/) ao sys.path do Python
+# Adiciona a raiz do projeto ao sys.path do Python para evitar erros na carga dos módulos.
 ROOT_DIR = Path(__file__).resolve().parent.parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.append(str(ROOT_DIR))
@@ -33,7 +33,7 @@ def setup_navigation() -> any:
     # Monta o menu baseado nas permissoes do usuario
     pages = [
             st.Page("views/home.py", title="Home", icon="🏠"),
-            st.Page("views/about.py", title="Sobre", icon="❓"),
+            st.Page("views/lista_usuarios.py", title="Listagem de Usuários", icon="👤"),
         ]
     return st.navigation(pages)
 

@@ -1,23 +1,17 @@
-# frontend/views/home.py
+# frontend/views/lista_usuarios.py
 
 import streamlit as st
 import utils.auth_utils as auth
 from services.data_service import listar_usuarios_sistema
 
 
-def render_home_page() -> None:
-    """Renderiza a pagina Sobre."""
+def render_lista_usuarios_page() -> None:
+    """Renderiza a pagina Listagem de usuários."""
 
-    st.subheader("Sobre MyProject")
-    st.write("v0.00 2026-oct-13 Navegação básica.")
-
-    st.divider()
-    st.title("Listagem de Usuários Cadastrados")
+    st.subheader("👤 Listagem de Usuários Cadastrados")
 
     # Obtém o token JWT atual armazenado na sessão para autenticação nas requisições
     token = auth.get_current_token()
-    st.write('token', token)
-
 
     try:
         # Chama a interface unificada do data_service
@@ -42,4 +36,4 @@ def render_home_page() -> None:
     except Exception as erro:
         st.error(f"Erro ao carregar a listagem de usuários: {erro}")
 
-render_home_page()
+render_lista_usuarios_page()

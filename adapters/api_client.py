@@ -8,6 +8,20 @@ API_BASE_URL = "http://localhost:8000"
 
 # --- Usuários ---
 
+def autenticar_usuario_sistema(username: str, password: str) -> Dict[str, Any]:
+    """Envia as credenciais para autenticação na API FastAPI."""
+    try:
+        response = httpx.post(
+            f"{API_BASE_URL}/auth/login", 
+            json={"username": username, "password": password}, 
+            timeout=10.0
+        )
+        if response.status_code == 200:
+            return response.json()
+    except Exception:
+        pass
+    return {"authenticated": False}
+
 def listar_usuarios_sistema(token: str = "") -> List[Dict[str, Any]]:
     """Consome a listagem de usuarios atraves da API FastAPI."""
     headers = {"Authorization": f"Bearer {token}"}
