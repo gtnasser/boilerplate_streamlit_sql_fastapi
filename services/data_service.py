@@ -19,6 +19,10 @@ else:
 
 # --- Usuários ---
 
+def criar_usuario_sistema(username: str, password: str, name: str, role: str = "agent", token: str = "") -> bool:
+    """Interface unificada para a criação de um novo usuário no sistema."""
+    return data_provider.criar_usuario_sistema(username, password, name, role, token)
+
 def autenticar_usuario_sistema(username: str, password: str) -> Dict[str, Any]:
     """Interface unificada para autenticação de usuários."""
     return data_provider.autenticar_usuario_sistema(username, password)

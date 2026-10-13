@@ -192,3 +192,38 @@ Conjunto de rotinas para manipulação dos dados de autenticação da sessão e 
 Tela de autenticação do usuário, chamada sempre que a sessão não estiver devidamente autenticada.
 
 -----
+
+## 🎯 Módulos de Banco de Dados
+
+Para manter o projeto limpo e coeso, vamos redefinir a fronteira exata entre estes dois módulos.
+
+### 📂 Estrutura de Diretórios
+
+```text
+myproject/
+├── core/
+│   └── database.py           # Configuração, infraestrutura e segurança
+├── database/
+│   ├── repository.py         # Camada de persistência
+```
+
+A Separação Ideal: `core/database.py` vs `database/repository.py1`.
+
+1. `core/database.py` (Infraestrutura Pura)
+
+- O que deve conter: Apenas a infraestrutura técnica de ligação à base de dados e funções utilitárias agnósticas de segurança.
+  - Configuração da `engine` e do `SessionLocal()`.
+  - Declaração da Base do ORM.
+  - Função de criação da base de dados (`init_database()`).
+  - Funções puras de encriptação e verificação de passwords (`_hash_password`, `verify_password)`.   
+- O que NÃO deve conter: 
+  - Consultas ou manipulações diretas de tabelas de negócio (como utilizadores ou ocorrências). 
+  - Ela não deve conhecer os modelos específicos da aplicação.
+  
+2. `database/repository.py` (Camada de Persistência / Queries / ORM)
+
+- O que deve conter: Toda a lógica de interação com o ORM (consultas, inserções, atualizações e eliminações) usando os modelos definidos em `database/models.py`.
+  - Funções que recebem uma sessão ativa (db: `Session`) e executam operações nas tabelas.
+  - Exemplo: `listar_usuarios(db)`, `buscar_usuario_por_username(db, username)` e a função de escrita `criar_usuario(db, ...)`. 
+
+

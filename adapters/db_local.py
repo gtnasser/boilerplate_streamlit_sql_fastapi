@@ -1,11 +1,29 @@
 # adapters/db_local.py
 
 from typing import List, Dict, Any
-from core.database import get_database_session, verify_password
-from database.repository import listar_usuarios, buscar_usuario_por_username
+from core.database import get_database_session, _hash_password, verify_password
+from database.repository import criar_usuario, listar_usuarios, buscar_usuario_por_username
 
 
 # --- Usuários ---
+
+def criar_usuario_sistema(username: str, password: str, name: str, role: str = "agent", token: str = "") -> bool:
+    """Cria um novo utilizador gerando o hash localmente e persistindo via repositório."""
+    salt_hex, hash_hex = _hash_password(password)
+    stored_password = f"{salt_hex}${hash_hex}"
+    
+    db = next(get_database_session())
+    try:
+        return criar_usuario(
+            db=db,
+            username=username,
+            password_hash=stored_password,
+            name=name,
+            role=role
+        )
+    finally:
+        db.close()
+
 
 def autenticar_usuario_sistema(username: str, password: str) -> Dict[str, Any]:
     """Valida as credenciais do usuário diretamente no banco SQLite local."""

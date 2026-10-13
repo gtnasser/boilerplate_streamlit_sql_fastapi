@@ -43,15 +43,19 @@ def get_database_session() -> Generator[Session, None, None]:
 
 
 def _seed_initial_admin() -> None:
-    """Insere um usuario administrador padrao utilizando a funcao create_user."""
+    """Insere um usuario administrador padrao utilizando uma função do modulo repositorio."""
     from database.models import UsuarioModel
+    from database.repository import buscar_usuario_por_username, criar_usuario
     
     with SessionLocal() as session:
-        admin_existente = session.query(UsuarioModel).filter(UsuarioModel.username == "admin").first()
+        admin_existente = buscar_usuario_por_username(session, "admin")
         if not admin_existente:
-            create_user(
+            salt_hex, hash_hex = _hash_password("admin123")
+            stored_password = f"{salt_hex}${hash_hex}"
+            criar_usuario(
+                db=session,
                 username="admin",
-                password="admin123",
+                password_hash=stored_password,
                 name="Administrador do Sistema",
                 role="admin"
             )
@@ -76,30 +80,3 @@ def verify_password(stored_password: str, provided_password: str) -> bool:
         return provided_digest_hex == hash_hex
     except Exception:
         return False
-
-
-# --- Usuário ---
-
-def create_user(username: str, password: str, name: str, role: str = "agent") -> bool:
-    """Cria um novo usuario no banco de dados com senha hasheada. Retorna True se sucesso ou False se o username ja existir."""
-    from database.models import UsuarioModel
-    
-    salt_hex, hash_hex = _hash_password(password)
-    stored_password = f"{salt_hex}${hash_hex}"
-    
-    user = UsuarioModel(
-        username=username,
-        name=name,
-        hashed_password=stored_password,
-        role=role,
-        is_active=True
-    )
-    
-    try:
-        with SessionLocal() as session:
-            session.add(user)
-            session.commit()
-        return True
-    except IntegrityError:
-        return False
-    
