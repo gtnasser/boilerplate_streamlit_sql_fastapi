@@ -12,7 +12,7 @@ def _obter_roles_invalidas(roles: List[str]) -> List[str]:
     """Retorna uma lista com todas as roles que são inválidas."""
     return [r for r in roles if r not in _ROLES_VALIDAS]
 
-def criar_usuario(db: Session, username: str, password_hash: str, name: str, roles: List[str] = ["login"]) -> bool:
+def criar_usuario(db: Session, username: str, password_hash: str, name: str, roles: List[str] = []) -> bool:
     """Insere um novo utilizador na base de dados após validar as roles."""
 
     roles_invalidas = _obter_roles_invalidas(roles)

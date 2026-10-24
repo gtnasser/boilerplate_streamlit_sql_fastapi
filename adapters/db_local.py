@@ -31,6 +31,15 @@ def autenticar_usuario_sistema(username: str, password: str) -> Dict[str, Any]:
     try:
         user = buscar_usuario_por_username(db, username)
         if user and user.is_active and verify_password(user.hashed_password, password):
+
+            # garante que usuário de serviço (ex: JOB ou ETL) não acessem via login
+            user_roles = user.roles if isinstance(user.roles, list) else []
+            if "login" not in user_roles:
+                return {
+                    "authenticated": False, 
+                    "error": "Credenciais inválidas para login."
+                }
+
             # Retorna os dados do usuário logado (simulando um payload de autenticação)
             return {
                 "authenticated": True,
@@ -41,7 +50,7 @@ def autenticar_usuario_sistema(username: str, password: str) -> Dict[str, Any]:
                 },
                 "token": f"local-token-{user.username}" # Token simulado para o modo local
             }
-        return {"authenticated": False}
+        return {"authenticated": False, "error": "Credenciais inválidas ou usuário inativo."}
     finally:
         db.close()
 

@@ -57,7 +57,7 @@ def _seed_initial_admin() -> None:
                 username=INITIAL_USERNAME,
                 password_hash=stored_password,
                 name="Administrador do Sistema",
-                roles=["admin"]
+                roles=["login", "admin"]
             )
 
 

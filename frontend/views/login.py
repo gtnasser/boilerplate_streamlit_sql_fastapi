@@ -38,7 +38,7 @@ def render_login_page() -> None:
                             st.success("Login realizado com sucesso!")
                             st.rerun()
                         else:
-                            st.error("Credenciais inválidas ou usuário inativo.")
+                            st.error(resultado.get("error"))
 
             # provisorio
             submit2 = st.form_submit_button("Desenvolvimento", width="stretch")

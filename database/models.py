@@ -12,7 +12,7 @@ from core.database import Base
 #    password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
 
 # lista fixa de roles
-_ROLES_VALIDAS = ["admin", "dev", "login", "client"]
+_ROLES_VALIDAS = ["login", "admin", "dev"]
 
 class UsuarioModel(Base):
     __tablename__ = "users"

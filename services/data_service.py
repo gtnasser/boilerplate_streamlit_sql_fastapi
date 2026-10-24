@@ -20,7 +20,7 @@ else:
 
 # --- Usuários ---
 
-def criar_usuario_sistema(username: str, password: str, name: str, roles: List[str] = "login", token: str = "") -> bool:
+def criar_usuario_sistema(username: str, password: str, name: str, roles: List[str] = [], token: str = "") -> bool:
     """Interface unificada para a criação de um novo usuário no sistema."""
     return data_provider.criar_usuario_sistema(username, password, name, roles, token)
 
