@@ -7,7 +7,7 @@ from database.repository import criar_usuario, listar_usuarios, buscar_usuario_p
 
 # --- Usuários ---
 
-def criar_usuario_sistema(username: str, password: str, name: str, roles: List[str] = ["login"], token: str = "") -> bool:
+def criar_usuario_sistema(username: str, password: str, name: str, roles: List[str] = [], token: str = "") -> bool:
     """Cria um novo utilizador gerando o hash localmente e persistindo via repositório."""
     salt_hex, hash_hex = _hash_password(password)
     stored_password = f"{salt_hex}${hash_hex}"
@@ -43,7 +43,7 @@ def autenticar_usuario_sistema(username: str, password: str) -> Dict[str, Any]:
             # Retorna os dados do usuário logado (simulando um payload de autenticação)
             return {
                 "authenticated": True,
-                "login": {
+                "user": {
                     "username": user.username,
                     "name": user.name,
                     "roles": user.roles

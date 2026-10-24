@@ -33,8 +33,18 @@ def setup_navigation() -> any:
     # Monta o menu baseado nas permissoes do usuario
     pages = [
             st.Page("views/home.py", title="Home", icon="🏠"),
-            st.Page("views/lista_usuarios.py", title="Listagem de Usuários", icon="👤"),
         ]
+
+    if auth.check_user_has_role(["admin"]):
+        pages.append(
+            st.Page("views/lista_usuarios.py", title="Listagem de Usuários", icon="👤"),
+        )
+
+    if auth.check_user_has_role(["dev"]):
+        pages.append(
+            st.Page("views/library.py", title="Bibliotecas", icon="📚"),
+        )
+
     return st.navigation(pages)
 
 
@@ -51,7 +61,12 @@ def render_sidebar():
                 auth.clear_user_session()
                 st.rerun()
 
-            st.info("Sessão ativa (JWT - Expira em 4h)")
+            st.divider()
+#            if st.button("auth.clear_user_session() & st.stop()", width='stretch'):
+#                st.switch_page(st.Page("views/login.py", title="Login", icon="🔑"))
+
+
+#            st.info("Sessão ativa (JWT - Expira em 4h)")
 
             if user_data:
                 st.json(user_data)

@@ -221,4 +221,5 @@ __marimo__/
 
 # my temp files
 ~*
-
+dump_project.py
+_dump*

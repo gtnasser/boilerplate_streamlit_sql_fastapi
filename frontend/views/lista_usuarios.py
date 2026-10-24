@@ -4,7 +4,12 @@ import streamlit as st
 import utils.auth_utils as auth
 from services.data_service import listar_usuarios_sistema
 
+user_data = auth.get_current_user_data()
 
+import streamlit as st
+import utils.auth_utils as auth
+
+@auth.role_required(allowed_roles="admin", login_page="views/login.py")
 def render_lista_usuarios_page() -> None:
     """Renderiza a pagina Listagem de usuários."""
 
@@ -36,4 +41,9 @@ def render_lista_usuarios_page() -> None:
     except Exception as erro:
         st.error(f"Erro ao carregar a listagem de usuários: {erro}")
 
-render_lista_usuarios_page()
+    if not auth.check_user_has_role(["dev"]):
+        st.error("⚠️ Acesso negado: você tem que ser **dev** para visualizar essas informações.")
+        st.stop() 
+
+if __name__ == "__main__":
+    render_lista_usuarios_page()

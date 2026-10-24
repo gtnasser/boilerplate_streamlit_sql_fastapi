@@ -15,7 +15,7 @@ def main() -> None:
     roles = sys.argv[4:] if len(sys.argv) > 4 else []
     # evita duplicidades e insere role "login" por padrão 
     roles = list(set(roles))
-    roles.append("login") if "login" not in roles else None
+    #roles.append("login") if "login" not in roles else None
 
     print(f"👤 Criando o utilizador '{username}' com as roles '{roles}' via data_service...")
     

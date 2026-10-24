@@ -21,7 +21,7 @@ class UsuarioModel(Base):
     username = Column(String, unique=True, index=True, nullable=False)
     name = Column(String, nullable=False)
     hashed_password = Column(String, nullable=False)
-    roles = Column(JSON, default=["login"], nullable=False)
+    roles = Column(JSON, default=[], nullable=False)
     is_active = Column(Boolean, default=True)
 
 

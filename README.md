@@ -186,6 +186,26 @@ Fluxo básico do Frontend: Menu de navegação, controle de sessão e login.
         └── lista_usuario.py  # Tela com listagem de usuários, como exemplo para menu, dados, etc.
 ```
 
+O módulo `auth_utils.py` disponibiliza o decorador `role_required` para que se possa controlar o acesso a cada página, e a função `check_user_has_role` para que se possa controlar o acesso a componentes ou funcionalidades, Validando a autenticação e a exixstência das roles necessárias para o acesso.
+
+`anypage.py`:
+```
+import streamlit as st
+import utils.auth_utils as auth
+
+@auth.role_required(allowed_roles=["admin"], login_page="views/login.py")
+def render():
+    st.title("Restricted Page")
+
+    # restricted content, allowed just for admin
+
+    if auth.check_user_has_role(["dev"]):
+        st.write("restricted content, allowed just for role.")
+
+if __name__ == "__main__":
+    render()
+```
+
 ### ️📄 Funções e Responsabilidade dos Módulos Principais
 
 1. Aplicação Principal (`app.py`)
