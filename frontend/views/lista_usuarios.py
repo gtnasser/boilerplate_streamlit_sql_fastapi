@@ -29,7 +29,7 @@ def render_lista_usuarios_page() -> None:
                 "id": "ID",
                 "username": "Nome de Usuário",
                 "name": "Nome Completo",
-                "role": "Perfil (Role)",
+                "roles": "Perfil (Roles)",
                 "is_active": "Ativo"
             }
         )

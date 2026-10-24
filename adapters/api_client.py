@@ -8,14 +8,14 @@ API_BASE_URL = "http://localhost:8000"
 
 # --- Usuários ---
 
-def criar_usuario_sistema(username: str, password: str, name: str, role: str = "agent", token: str = "") -> bool:
+def criar_usuario_sistema(username: str, password: str, name: str, roles: str = ["login"], token: str = "") -> bool:
     """Consome a API FastAPI para criar um novo usuário."""
     headers = {"Authorization": f"Bearer {token}"}
     payload = {
         "username": username,
         "password": password,
         "name": name,
-        "role": role
+        "roles": roles
     }
     try:
         response = httpx.post(f"{API_BASE_URL}/usuarios", json=payload, headers=headers, timeout=10.0)

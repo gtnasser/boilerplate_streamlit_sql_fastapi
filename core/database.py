@@ -48,16 +48,16 @@ def _seed_initial_admin() -> None:
     from database.repository import buscar_usuario_por_username, criar_usuario
     
     with SessionLocal() as session:
-        admin_existente = buscar_usuario_por_username(session, "admin")
+        admin_existente = buscar_usuario_por_username(session, INITIAL_USERNAME)
         if not admin_existente:
-            salt_hex, hash_hex = _hash_password("admin123")
+            salt_hex, hash_hex = _hash_password(INITIAL_PASSWORD)
             stored_password = f"{salt_hex}${hash_hex}"
             criar_usuario(
                 db=session,
-                username="admin",
+                username=INITIAL_USERNAME,
                 password_hash=stored_password,
                 name="Administrador do Sistema",
-                role="admin"
+                roles=["admin"]
             )
 
 

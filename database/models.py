@@ -1,9 +1,8 @@
 # database/models.py
 
-from sqlalchemy import String, Text, select
-from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean
 from datetime import datetime
+from sqlalchemy import String, Text, Column, Integer, DateTime, Boolean, JSON
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 from core.database import Base
 
 #class User(Base):
@@ -12,6 +11,9 @@ from core.database import Base
 #    username: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
 #    password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
 
+# lista fixa de roles
+_ROLES_VALIDAS = ["admin", "dev", "login", "client"]
+
 class UsuarioModel(Base):
     __tablename__ = "users"
 
@@ -19,7 +21,7 @@ class UsuarioModel(Base):
     username = Column(String, unique=True, index=True, nullable=False)
     name = Column(String, nullable=False)
     hashed_password = Column(String, nullable=False)
-    role = Column(String, default="agent") # Ex: "admin", "agent", "client"
+    roles = Column(JSON, default=["login"], nullable=False)
     is_active = Column(Boolean, default=True)
 
 

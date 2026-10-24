@@ -32,7 +32,7 @@ def render_login_page() -> None:
                             auth.set_user_session(token, {
                                 "name": user_info.get("name"),
                                 "username": user_info.get("username"),
-                                "roles": [user_info.get("role", "agent")]
+                                "roles": [user_info.get("roles", [])]
                             })
 
                             st.success("Login realizado com sucesso!")
@@ -43,7 +43,7 @@ def render_login_page() -> None:
             # provisorio
             submit2 = st.form_submit_button("Desenvolvimento", width="stretch")
             if submit2:
-                auth.set_user_session("hasdgfhdasgflhagd", {"name": "desenvolvedor", "roles": ["developer", "admin"]})
+                auth.set_user_session("hasdgfhdasgflhagd", {"name": "desenvolvedor", "roles": ["dev", "admin"]})
                 st.rerun()
 
 render_login_page()

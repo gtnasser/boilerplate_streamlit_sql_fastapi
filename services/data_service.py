@@ -6,6 +6,7 @@ from typing import List, Dict, Any
 
 # Carrega o adaptador correto conforme o valor da variável de ambiente (padrão: local)
 APP_MODE = os.getenv("APP_MODE", "local")
+print("APP_MODE:", APP_MODE)
 
 if APP_MODE == "local":
     from adapters import db_local as data_provider
@@ -19,9 +20,9 @@ else:
 
 # --- Usuários ---
 
-def criar_usuario_sistema(username: str, password: str, name: str, role: str = "agent", token: str = "") -> bool:
+def criar_usuario_sistema(username: str, password: str, name: str, roles: List[str] = "login", token: str = "") -> bool:
     """Interface unificada para a criação de um novo usuário no sistema."""
-    return data_provider.criar_usuario_sistema(username, password, name, role, token)
+    return data_provider.criar_usuario_sistema(username, password, name, roles, token)
 
 def autenticar_usuario_sistema(username: str, password: str) -> Dict[str, Any]:
     """Interface unificada para autenticação de usuários."""

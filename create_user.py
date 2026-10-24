@@ -6,17 +6,17 @@ def main() -> None:
     """Script de linha de comando para criar um novo utilizador no sistema através do data_service."""
     if len(sys.argv) < 3:
         print("❌ Uso incorreto!")
-        print("Exemplo de uso: python create_user.py <username> <password> [nome_completo] [role]")
+        print("Usage: python create_user.py <username> <password> [nome_completo] [role ...]")
         sys.exit(1)
 
     username = sys.argv[1]
     password = sys.argv[2]
     name = sys.argv[3] if len(sys.argv) > 3 else username.capitalize()
-    role = sys.argv[4] if len(sys.argv) > 4 else "agent"
+    roles = sys.argv[4:] if len(sys.argv) > 4 else ["login"]
 
-    print(f"👤 A criar o utilizador '{username}' com a role '{role}' via data_service...")
+    print(f"👤 Criando o utilizador '{username}' com as roles '{roles}' via data_service...")
     
-    sucesso = criar_usuario_sistema(username=username, password=password, name=name, role=role)
+    sucesso = criar_usuario_sistema(username=username, password=password, name=name, roles=roles)
 
     if sucesso:
         print(f"✅ Utilizador '{username}' criado com sucesso!")

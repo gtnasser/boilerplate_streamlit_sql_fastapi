@@ -7,7 +7,7 @@ from database.repository import criar_usuario, listar_usuarios, buscar_usuario_p
 
 # --- Usuários ---
 
-def criar_usuario_sistema(username: str, password: str, name: str, role: str = "agent", token: str = "") -> bool:
+def criar_usuario_sistema(username: str, password: str, name: str, roles: List[str] = ["login"], token: str = "") -> bool:
     """Cria um novo utilizador gerando o hash localmente e persistindo via repositório."""
     salt_hex, hash_hex = _hash_password(password)
     stored_password = f"{salt_hex}${hash_hex}"
@@ -19,7 +19,7 @@ def criar_usuario_sistema(username: str, password: str, name: str, role: str = "
             username=username,
             password_hash=stored_password,
             name=name,
-            role=role
+            roles=roles
         )
     finally:
         db.close()
@@ -34,10 +34,10 @@ def autenticar_usuario_sistema(username: str, password: str) -> Dict[str, Any]:
             # Retorna os dados do usuário logado (simulando um payload de autenticação)
             return {
                 "authenticated": True,
-                "user": {
+                "login": {
                     "username": user.username,
                     "name": user.name,
-                    "role": user.role
+                    "roles": user.roles
                 },
                 "token": f"local-token-{user.username}" # Token simulado para o modo local
             }
@@ -56,7 +56,7 @@ def listar_usuarios_sistema(token: str = "") -> List[Dict[str, Any]]:
                 "id": u.id,
                 "username": u.username,
                 "name": u.name,
-                "role": u.role,
+                "roles": u.roles,
                 "is_active": u.is_active
             }
             for u in usuarios

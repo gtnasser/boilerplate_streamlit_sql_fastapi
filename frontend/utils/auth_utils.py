@@ -56,7 +56,7 @@ def get_current_user_roles() -> List[str]:
 def check_user_has_role(required_roles: Union[str, List[str]]) -> bool:
     """
     Verifica se o usuario logado possui pelo menos uma das roles especificadas.
-    Pode receber uma string única (ex: 'admin') ou uma lista (ex: ['gerente', 'coordenador']).
+    Pode receber uma string única (ex: 'admin') ou uma lista (ex: ['admin', 'director']).
     """
     _ensure_session_initialized()
     if not is_authenticated():
@@ -64,4 +64,4 @@ def check_user_has_role(required_roles: Union[str, List[str]]) -> bool:
     user_roles = get_current_user_roles()
     if isinstance(required_roles, str):
         required_roles = [required_roles]
-    return any(role in user_roles for role in required_roles)
+    return any(roles in user_roles for roles in required_roles)
