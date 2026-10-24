@@ -1,41 +1,49 @@
-# Myproject
+# 🎫 Boilerplate Streamlit, SQL & FastAPI
 
-Base para o desenvolvimento de sistemas modulares com autenticação, controle de sessão via **JWT** e acesso a bancos de dados relacionais. 
-O projeto foi desenhado para servir como ponto de partida (*boilerplate*) para novos softwares, permitindo flexibilidade total na arquitetura de implantação.
+Um boilerplate profissional e desacoplado para aplicações em Python que combinam **Streamlit** (Frontend) com **FastAPI** (Backend) e **SQLAlchemy** (Banco de Dados relacional), estruturado sob os princípios da **Arquitetura de Portas e Adaptadores (Hexagonal)**, permitindo flexibilidade total na arquitetura de implantação.
 
-## 🎯 Arquitetura e Padrões de Projeto
+---
 
-O projeto adota uma abordagem baseada em **Ports & Adapters (Arquitetura Hexagonal / Clean Architecture)**. 
-O grande diferencial dessa estrutura é que a interface e as regras de negócio são completamente desacopladas da camada de persistência e comunicação. 
+## 🏗️ Arquitetura e Flexibilidade
 
-O sistema pode rodar em dois cenários distintos, controlados de forma simples por meio de uma variável de ambiente (`APP_MODE`):
+Este projeto adota uma abordagem baseada em **Ports & Adapters (Arquitetura Hexagonal / Clean Architecture)**. O grande diferencial dessa estrutura é que a interface e as regras de negócio são completamente desacopladas da camada de persistência e comunicação, permitindo alternar facilmente entre dois modos de execução através da variável de ambiente `APP_MODE`:
 
-- **Cenário 1 (Monolítico / Local):** O frontend consome diretamente o repositório local via **SQLAlchemy**, executando operações de banco de dados no mesmo servidor.
-- **Cenário 2 (Desacoplado / API):** O frontend realiza requisições HTTP (`httpx`) para um backend em **FastAPI**, que por sua vez gerencia o acesso ao banco de dados.
+1. **Modo Monolítico (`APP_MODE=local`)**: O Streamlit interage diretamente com a base de dados através de adaptadores (`adapters/db_local.py`). Ideal para MVPs rápidos ou aplicações internas.
+2. **Modo Desacoplado / Microsserviço (`APP_MODE=api`)**: O Streamlit atua estritamente como um cliente HTTP (`httpx`), consumindo uma API REST independente (`adapters/api_client.py`). Ideal para arquiteturas escaláveis.
 
-Essa separação rígida de responsabilidades promove alta **manutenibilidade** e **testabilidade**. 
-É possível, por exemplo, criar cenários adicionais totalmente isolados (como um `mock_repository.py` para testes automatizados) ajustando apenas o mapeamento no `data_service.py`.
+Vantagens:
+- O acesso aos dados é feito somente pela camada de serviços (`services/data_service.py`), sendo completamente transparente para as telas do Streamlit.
+- A separação rígida de responsabilidades promove alta **manutenibilidade** e **testabilidade**. É possível, por exemplo, criar cenários adicionais totalmente isolados (como um `mock_repository.py` para testes automatizados) ajustando apenas o mapeamento no `data_service.py`.
 
-### 📂 Estrutura de Diretórios
+---
+
+## 📂 Estrutura do Projeto
 
 ```text
-myproject/
-├── core/
-│   ├── config.py             # Lê as variáveis de ambiente e define o modo (local vs api)
-│   └── database.py           # Configura a engine do SQLite e provê as sessões (SessionLocal)
-├── services/
-│   └── data_service.py       # Interface central de negócio (orquestrador que define o adaptador ativo)
+boilerplate_streamlit_sql_fastapi/
+├── LICENSE
 ├── adapters/
-│   ├── db_local.py           # Acesso direto ao banco local (Usado no Cenário 1)
-│   └── api_client.py         # Acesso via HTTP/FastAPI (Usado no Cenário 2)
+│   ├── api_client.py        # Adaptador para consumo da API FastAPI (Modo API)
+│   └── db_local.py          # Adaptador para acesso direto ao SQLite (Modo Local)
+├── core/
+│   ├── config.py            # Configurações globais e leitura de variáveis de ambiente
+│   └── database.py          # Configuração do SQLAlchemy, Sessão e Hashing de senhas
+├── database/
+│   ├── models.py            # Modelos/Tabelas do banco de dados (SQLAlchemy)
+│   └── repository.py        # Consultas e operações de CRUD no banco
 ├── frontend/
-│   └── views/                # Telas do Streamlit que consomem exclusivamente o data_service
-├── mydatabase.db
-└── .env                      # Variáveis de ambiente (ex: APP_MODE=local)
+│   ├── app.py               # Ponto de entrada principal do Streamlit
+│   ├── utils/
+│   │   └── auth_utils.py    # Gerenciamento de sessão, token e permissões
+│   └── views/               # Páginas/Telas do sistema que consomem exclusivamente o data_service
+├── services/
+│   └── data_service.py      # Camada unificada (Facade) que chaveia os adaptadores
+├── create_user.py           # Script CLI para criação de usuários administrativos/iniciais
+└── requirements.txt         # Dependências do projeto
 ```
 
 
-### ️📄 Funções e Responsabilidade dos Módulos Principais
+## 🎯 Funções e Responsabilidade dos Módulos Principais
 
 1. Configuração do Ambiente (`core/config.py`)
 
@@ -84,7 +92,7 @@ def get_database_session() -> Generator[Session, None, None]:
 
 3. Interface Central de Dados (`services/data_service.py`)
 
-Atua como o ponto de chaveamento do sistema. O frontend interage exclusivamente com este serviço, que injeta o adaptador correspondente com base na variável `APP_MODE`.
+Atua como o ponto de chaveamento do sistema, isolando completamente as camadas visual e dados. O frontend interage exclusivamente com este serviço, que injeta o adaptador correspondente com base na variável `APP_MODE`.
 
 `services/data_service.py`:
 ```python
@@ -161,6 +169,7 @@ def criar_ocorrencia_sistema(dados: Dict[str, Any], token: str = "") -> Dict[str
 
 -----
 
+
 ## 🎯 Navegação básica
 
 Fluxo básico do Frontend: Menu de navegação, controle de sessão e login.
@@ -171,7 +180,7 @@ Fluxo básico do Frontend: Menu de navegação, controle de sessão e login.
 └── frontend/
     ├── app.py                # Aplicação principal, menu lateral, roteamento e login
     ├── utils/
-    |   └── auth_utils.py     # Módulo encapsulado de estado e permissões
+    |   └── auth_utils.py     # Gerencia o estado da sessão e permissões
     └── views/                # Telas do Streamlit que consomem exclusivamente o data_service
         ├── home.py           # Tela de entrada do sistema
         └── lista_usuario.py  # Tela com listagem de usuários, como exemplo para menu, dados, etc.
@@ -192,6 +201,7 @@ Conjunto de rotinas para manipulação dos dados de autenticação da sessão e 
 Tela de autenticação do usuário, chamada sempre que a sessão não estiver devidamente autenticada.
 
 -----
+
 
 ## 🎯 Módulos de Banco de Dados
 
@@ -226,4 +236,23 @@ A Separação Ideal: `core/database.py` vs `database/repository.py1`.
   - Funções que recebem uma sessão ativa (db: `Session`) e executam operações nas tabelas.
   - Exemplo: `listar_usuarios(db)`, `buscar_usuario_por_username(db, username)` e a função de escrita `criar_usuario(db, ...)`. 
 
+
+---
+
+
+## 🎯 Resumo:
+
+O projeto possui uma arquitetura limpa e excelente, destacando-se por:
+1. **Padrão Adapter / Strategy (`services/data_service.py`):** Ele chaveia de forma totalmente transparente entre **modo local** (acesso direto ao SQLite via SQLAlchemy) e **modo API** (consumindo um backend FastAPI via `httpx`) apenas usando a variável de ambiente `APP_MODE`.
+2. **Separação de Camadas:** Modelos, repositórios, serviços, adaptadores e views do Streamlit bem isolados.
+4. **Segurança Inicial:** Hashing robusto de senhas com **PBKDF2-HMAC-SHA256**, gerando seeds automáticas para o usuário administrador (`admin` / `admin123`) na primeira execução.
+
+### ️📄 Como fazer para começar a implementar as funcionalidades?
+
+Primeiro é necessário definir o cenário **Monolítico** (base relacional local) ou **Desacoplado** (acesso a dados através de API).
+
+Em seguida, siga um dos guias correspondente ao cenário escolhido, eles cobrem todo o passo a passo com trechos funcionais de código para criar novas funcionalidades do banco à interface no modo monolítico local e como conectar os endpoints FastAPI e chamadas HTTP httpx no modo desacoplado.
+
+- [Monolítico](MONOLITHIC_GUIDE.md)
+- [Desacoplado](DECOUPLED_GUIDE.md)
 
