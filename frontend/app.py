@@ -1,16 +1,14 @@
 # frontend/app.py
-
+import streamlit as st
 import sys
 from pathlib import Path
+import utils.auth_utils as auth
 
 # Adiciona a raiz do projeto ao sys.path do Python para evitar erros na carga dos módulos.
 ROOT_DIR = Path(__file__).resolve().parent.parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.append(str(ROOT_DIR))
     
-import streamlit as st
-import utils.auth_utils as auth
-
 # Configuracao da pagina (sempre o primeiro comando Streamlit)
 st.set_page_config(
     page_title="MyProject",
@@ -29,21 +27,27 @@ def setup_navigation() -> any:
             st.Page("views/login.py", title="Login", icon="🔑")
         ])
 
-    
     # Monta o menu baseado nas permissoes do usuario
-    pages = [
+    pages = {
+        "Menu Principal": [
             st.Page("views/home.py", title="Home", icon="🏠"),
-        ]
-
-    if auth.check_user_has_role(["admin"]):
-        pages.append(
+        ],
+    }
+    if auth.check_user_has_role(["dev", "admin"]):
+        pages["Menu Principal"].append(
             st.Page("views/lista_usuarios.py", title="Listagem de Usuários", icon="👤"),
         )
+    if auth.check_user_has_role(["admin"]):
+        pages["Admin"] = [
+            st.Page("views/admin_page.py", title="Painel do Administrador", icon="👤"),
+        ]
 
     if auth.check_user_has_role(["dev"]):
-        pages.append(
+        pages["Desenvolvimento"] = [
+            st.Page("views/dev_page.py", title="Painel do Desenvolvedor", icon="👤"),
             st.Page("views/library.py", title="Bibliotecas", icon="📚"),
-        )
+#            st.Page("views/testes.py", title="Painel de Testes", icon="🧪"),
+        ]
 
     return st.navigation(pages)
 
@@ -61,15 +65,15 @@ def render_sidebar():
                 auth.clear_user_session()
                 st.rerun()
 
+            # provisorio
+
             st.divider()
-#            if st.button("auth.clear_user_session() & st.stop()", width='stretch'):
-#                st.switch_page(st.Page("views/login.py", title="Login", icon="🔑"))
 
+            with st.expander('current user data', expanded=False):
+                st.write('token:', auth.get_current_token())
+                st.write('data:', auth.get_current_user_data())
+                st.write('roles:', auth.get_current_user_roles())
 
-#            st.info("Sessão ativa (JWT - Expira em 4h)")
-
-            if user_data:
-                st.json(user_data)
 
 def main():
     """Inicia a aplicacao Streamlit."""

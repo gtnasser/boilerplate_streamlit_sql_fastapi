@@ -2,7 +2,7 @@
 
 import hashlib
 import os
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, event
 from sqlalchemy.orm import declarative_base, sessionmaker, Session
 from sqlalchemy.exc import IntegrityError
 from typing import Generator, Tuple
@@ -23,6 +23,15 @@ SessionLocal = sessionmaker(
     autoflush=False, 
     bind=engine
 )
+
+# Ativa o modo WAL no SQLite para melhorar a concorrência
+@event.listens_for(engine, "connect")
+def set_sqlite_pragma(dbapi_connection, connection_record):
+  cursor = dbapi_connection.cursor()
+  cursor.execute("PRAGMA journal_mode=WAL")
+  cursor.execute("PRAGMA synchronous=NORMAL")
+  cursor.close()
+
 Base = declarative_base()
 
 # --- Inicialização de banco e sessão

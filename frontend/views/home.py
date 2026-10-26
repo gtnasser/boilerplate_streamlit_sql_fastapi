@@ -2,6 +2,7 @@
 import streamlit as st
 import utils.auth_utils as auth
 
+@auth.role_required(allowed_roles="login", login_page="views/login.py")
 def render_home_page() -> None:
     """Renderiza a pagina inicial protegida."""
     user_data = auth.get_current_user_data()

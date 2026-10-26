@@ -4,6 +4,8 @@ from typing import List, Dict, Any, Union
 from functools import wraps
 import time
 
+# --- manipula SESSION_STATE ---
+
 def _ensure_session_initialized() -> None:
     """Garante internamente que as chaves de sessao existem antes de qualquer operacao."""
     if "authenticated" not in st.session_state:
@@ -56,6 +58,7 @@ def get_current_user_roles() -> List[str]:
     user_data = get_current_user_data()
     return user_data.get("roles", [])
 
+# --- manupula ROLES ---
 
 def check_user_has_role(required_roles: Union[str, List[str]]) -> bool:
     """
